@@ -5,6 +5,10 @@
 #include <optional>
 #include <string>
 
+
+using namespace std;
+
+
 // ============================================================
 // PART 1: Abstract class Shape and its derived classes
 // ============================================================

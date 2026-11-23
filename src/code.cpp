@@ -10,12 +10,12 @@
 
 // Uncomment the author block below and fill in your name:
 
-// std::string AUTHOR_NAME       = "Your Name";
-// std::string AUTHOR_AUTHORSHIP = "I acknowledge that I have worked on this "
-// "assignment independently, except where explicitly noted and referenced. "
-// "Any collaboration or use of external resources has been properly cited. "
-// "I am fully aware of the consequences of academic dishonesty and agree "
-// "to abide by the university's academic integrity policy.";
+std::string AUTHOR_NAME       = "Caden Johns";
+std::string AUTHOR_AUTHORSHIP = "I acknowledge that I have worked on this "
+"assignment independently, except where explicitly noted and referenced. "
+"Any collaboration or use of external resources has been properly cited. "
+"I am fully aware of the consequences of academic dishonesty and agree "
+"to abide by the university's academic integrity policy.";
 
 // ============================================================
 // PART 1: Shape, Circle, Square, Rectangle
@@ -25,65 +25,67 @@
 bool Shape::operator<(const Shape &other) const
 {
     // TODO: compare area() of both shapes with <
-    return false;
+    return area()<other.area();
 }
 
 /// Constructor with a member initializer list.
 Circle::Circle(double newRadius)
 {
-    // TODO: move the initialization of 'radius' into an initializer list
+    radius=newRadius;
 }
 
 /// pi * radius * radius, use std::numbers::pi
 double Circle::area() const
 {
+    
     // TODO: implement
-    return 0.0;
+    return std::numbers::pi * radius * radius;
 }
 
 /// Return exactly "Circle".
 std::string Circle::name() const
 {
     // TODO: implement
-    return "";
+    return "Circle";
 }
 
 Square::Square(double newSide)
 {
-    // TODO: initializer list
+    side=newSide;
 }
 
 /// side * side
 double Square::area() const
 {
     // TODO: implement
-    return 0.0;
+    return side*side;
 }
 
 /// Return exactly "Square".
 std::string Square::name() const
 {
     // TODO: implement
-    return "";
+    return "Square";
 }
 
 Rectangle::Rectangle(double newWidth, double newHeight)
 {
-    // TODO: initializer list
+    width=newWidth;
+    height=newHeight;
 }
 
 /// width * height
 double Rectangle::area() const
 {
     // TODO: implement
-    return 0.0;
+    return width*height;
 }
 
 /// Return exactly "Rectangle".
 std::string Rectangle::name() const
 {
     // TODO: implement
-    return "";
+    return "Rectangle";
 }
 
 // ============================================================
@@ -93,58 +95,84 @@ std::string Rectangle::name() const
 /// RAII: delete EVERY shape, then clear the list.
 ShapeList::~ShapeList()
 {
-    // TODO: implement
+    for (auto s : data)
+    {
+        delete s;
+    }
+    
 }
 
 /// Append at the end. Return -1 if newShapePtr is nullptr, 0 on success.
 int ShapeList::addShape(Shape *newShapePtr)
 {
-    // TODO: implement
-    return -1;
+    if(newShapePtr==nullptr){
+        return -1;
+    }
+    
+    data.push_back(newShapePtr);
+
+    return 0;
 }
 
 /// Delete the first shape and remove it from the list.
 /// Return false if the list is empty, true otherwise.
 bool ShapeList::removeFirst()
 {
-    // TODO: implement
-    return false;
+    if (data.size()==0){
+        return false;
+    }
+    
+    data.pop_front();
+    return 0;
 }
 
 /// Number of shapes in the list.
 int ShapeList::length() const
 {
-    // TODO: implement
-    return 0;
+    return data.size();
 }
 
 /// Sum of area() of all shapes (0.0 if empty).
 double ShapeList::totalArea() const
 {
-    // TODO: implement
-    return 0.0;
+    double total=0;
+
+    for (auto s: data){
+        total+=s->area();
+    }
+    return total;
 }
 
 /// One line per shape: name, one space, area. Return the number of shapes.
 int ShapeList::printList() const
 {
-    // TODO: implement
-    return 0;
+    for (auto s: data){
+        printf("%s %f\n",s->name().c_str(),s->area());
+    }
+    return data.size();
 }
 
 /// area() of the shape at index, or std::nullopt if index is out of range.
 /// Hint: std::next(data.begin(), index)
 std::optional<double> ShapeList::areaAt(int index) const
 {
-    // TODO: implement
-    return std::nullopt;
+
+    auto result=std::next(data.begin(), index);
+    if (result==data.end()){
+        return std::nullopt;
+    }
+    return (*result)->area();
+    
 }
 
 /// name() of the shape at index, or std::nullopt if index is out of range.
 std::optional<std::string> ShapeList::nameAt(int index) const
 {
-    // TODO: implement
-    return std::nullopt;
+    auto result=std::next(data.begin(), index);
+    if (result==data.end()){
+        return std::nullopt;
+    }
+    return (*result)->name();
 }
 
 /// Your own STABLE insertion sort, smallest area first.
@@ -153,7 +181,31 @@ std::optional<std::string> ShapeList::nameAt(int index) const
 /// then move the element there with data.splice(...).
 void ShapeList::insertionSort()
 {
-    // TODO: implement
+
+    list<Shape*> sorted;
+    list<Shape*> unsorted;
+
+    for(auto s : data){
+        unsorted.push_back(s);
+    }
+
+    Shape* checkShape;
+    sorted.push_back(data.front());
+    for (size_t i = 0; i < unsorted.size(); i++)
+    {
+        checkShape=unsorted.front();
+        for (size_t i = 0; i < sorted.size(); i++)
+        {
+            if(*next(sorted.begin(),i)<checkShape){
+                sorted.emplace(next(sorted.begin(),i), checkShape);
+            }
+        }
+        
+    }
+    for(auto s: sorted){
+        cout<<s->area()<<endl;
+    }
+    
 }
 
 /// True if no shape is smaller than the one before it.
